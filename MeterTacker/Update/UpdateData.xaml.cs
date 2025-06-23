@@ -28,21 +28,16 @@ namespace MeterTacker.Update
                 dpStartDate.BlackoutDates.Add(new CalendarDateRange(blackoutStart, DateTime.MaxValue));
             }
         }
-
         private void dpStartDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!dpStartDate.SelectedDate.HasValue)
                 return;
-
-
             DateTime newDate = dpStartDate.SelectedDate.Value;
             DateTime baseDate;
-
             if (CommonList.startDate != null)
             {
                 baseDate = CommonList.startDate;
             }
-
             else
             {
                 txtBaseDateSummary.Text = "Base Date: (Not Selected)";
@@ -86,7 +81,6 @@ namespace MeterTacker.Update
                     CommonList.startDate = dpBaseDate.SelectedDate.Value;
                 }
                 int daydiff = (selectedDate - CommonList.startDate).Days;
-
                 string newMeterNumber = txtParameterNumber.Text;
                 string newGatewayNumber = txtGatewayNumber.Text;
                 var mainWindow = Application.Current.Windows.OfType<MeterTacker.GetDataWUpdate.GetDataWithUpdate>().FirstOrDefault();

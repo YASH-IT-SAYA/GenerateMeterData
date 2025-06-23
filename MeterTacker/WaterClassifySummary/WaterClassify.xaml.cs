@@ -17,7 +17,6 @@ namespace MeterTacker.WaterClassifySummary
             InitializeComponent();
             PopulateYearAndMonth();
         }
-  
         private void PopulateYearAndMonth()
         {
             int currentYear = DateTime.Now.Year;
@@ -29,11 +28,9 @@ namespace MeterTacker.WaterClassifySummary
             {
                 MonthComboBox.Items.Add(month.ToString("D2"));
             }
-    
             YearComboBox.SelectedItem = currentYear;
             MonthComboBox.SelectedItem = DateTime.Now.Month.ToString("D2");
         }
-
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
             if (!float.TryParse(hghfrc.Text, out float high) &&
@@ -46,7 +43,7 @@ namespace MeterTacker.WaterClassifySummary
             }
 
             string MeterNum = MeterNumber.Text;
-            if(string.IsNullOrWhiteSpace(MeterNum))
+            if (string.IsNullOrWhiteSpace(MeterNum))
             {
                 MessageBox.Show("Meter Number is required");
                 return;
@@ -75,7 +72,6 @@ namespace MeterTacker.WaterClassifySummary
             }
 
             string formattedMonth = $"['{year}-{month}']";
-
             string env = (cmbTableName.SelectedItem as ComboBoxItem)?.Content.ToString();
             if (string.IsNullOrWhiteSpace(env) || env == "Select Environment")
             {
@@ -84,13 +80,12 @@ namespace MeterTacker.WaterClassifySummary
             }
 
             string connectionString = env == "Development Environment" ? developmentEnvironment : testingEnvironment;
-
             var entries = new List<(string Category, float Value)>();
             if (float.TryParse(hghfrc.Text, out high)) entries.Add(("High Flow Rate Consumption", high));
             if (float.TryParse(lfrc.Text, out low)) entries.Add(("Low Flow Rate Consumption", low));
             if (float.TryParse(mfrc.Text, out medium)) entries.Add(("Medium Flow Rate Consumption", medium));
             if (float.TryParse(outliers.Text, out outlier)) entries.Add(("Outliers", outlier));
-      
+
             busyIndicator.IsBusy = true;
 
             try
