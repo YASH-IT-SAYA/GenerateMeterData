@@ -15,9 +15,18 @@ namespace MeterTacker.Update
         public UpdateData()
         {
             InitializeComponent();
-
             dpStartDate.DisplayDateEnd = DateTime.Now;
-            dpStartDate.BlackoutDates.Add(new CalendarDateRange(DateTime.Today.AddDays(1), DateTime.MaxValue));
+            UpdateBlackoutDates();
+        }
+        private void UpdateBlackoutDates()
+        {
+            if (CommonList.startDate != null && CommonList.endDate != null)
+            {
+                int dayDifference = (CommonList.endDate - CommonList.startDate).Days;
+                DateTime blackoutStart = DateTime.Today.AddDays(-dayDifference);
+                dpStartDate.BlackoutDates.Clear(); 
+                dpStartDate.BlackoutDates.Add(new CalendarDateRange(blackoutStart, DateTime.MaxValue));
+            }
         }
 
         private void dpStartDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)

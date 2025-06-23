@@ -23,7 +23,7 @@ namespace MeterTacker.GetDataWUpdate
         //public List<DataRow> originalData = new List<DataRow>();
         public bool hasUnsavedChanges { get; set; } = false;
 
-        //public GetDataWithUpdate(List<DataRow> data, List<DataRow> originalData, string function, string meter, string gw, DateTime start)
+
         public GetDataWithUpdate()
         {
             InitializeComponent();
@@ -95,18 +95,13 @@ namespace MeterTacker.GetDataWUpdate
 
         private void RefreshPage_Click(object sender, RoutedEventArgs e)
         {
-            //if (hasUnsavedChanges && !ConfirmUnsavedChanges())
-            //    return;
-            //allData.Clear();
-            //LoadData();
-            //this.Close();
             GetData getData = new GetData();
             bool? result = getData.ShowDialog();
 
-            // After TestWindow is closed
-            if (result == true) // Optional: check DialogResult if needed
+
+            if (result == true) 
             {
-                LoadData(); // Refresh data
+                LoadData(); 
             }
         }
 
@@ -122,24 +117,6 @@ namespace MeterTacker.GetDataWUpdate
 
         private void Update_data_Click(object sender, RoutedEventArgs e)
         {
-            //var selectedItem = WaterFlowGrid.SelectedItem as DataRowView;
-            //if (selectedItem == null)
-            //{
-            //    MessageBox.Show("Please select a row to update.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    return;
-            //}
-            //DataRowView dataRow = selectedItem;
-
-            //string meterCol = selectedFunction == "daily_meter_vise_cons_raw" ? "MeterNumber" : "meterNumber";
-            //string gatewayCol = selectedFunction == "daily_meter_vise_cons_raw" ? "GatewayMac" : "gw";
-
-            //string selectedMeter = dataRow.Row.Table.Columns.Contains(meterCol) ? dataRow.Row[meterCol].ToString() : string.Empty;
-            //string selectedGateway = dataRow.Row.Table.Columns.Contains(gatewayCol) ? dataRow.Row[gatewayCol].ToString() : string.Empty;
-
-            //DateTime? filterDate = startDate;
-
-            //this.Hide();
-            //var updateWindow = new UpdateData(selectedMeter, selectedGateway, filterDate, selectedFunction);
             var updateWindow = new UpdateData();
             updateWindow.ShowDialog();
 
@@ -155,15 +132,12 @@ namespace MeterTacker.GetDataWUpdate
             }
             else
             {
-                // If no updates were made, ensure Save DB is still disabled
                 SavDB.IsEnabled = false;
                 StyleButton(SavDB, Brushes.Gray, Brushes.LightGray);
             }
 
             this.Show();
-
         }
-
         private void SavDB_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();

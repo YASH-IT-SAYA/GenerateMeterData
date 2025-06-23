@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 using MeterTacker.Savedata;
 using MeterTacker.GetDataWUpdate;
 using MeterTacker.Helper;
+using System.Configuration;
 
 namespace MeterTacker.CheckoutData
 {
     public partial class GetData : Window
     {
-        private static readonly string connectionString = "Server=saya-live.cq6nozddb1mr.us-west-2.rds.amazonaws.com;Port=5432;Database=SAYA;User Id=teamqa;Password=MLIS@3120;Timeout=1024;Pooling=true;MaxPoolSize=50;CommandTimeout=0;";
-
+        private string connectionString = ConfigurationManager.ConnectionStrings["connectionString"].ConnectionString;
         public bool hasUnsavedChanges { get; set; } = false;
         public GetData()
         {
@@ -33,16 +33,19 @@ namespace MeterTacker.CheckoutData
                     MessageBox.Show("Please select a valid table.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
                 if (string.IsNullOrWhiteSpace(txtMeterNumber.Text))
                 {
                     MessageBox.Show("Please enter a valid Meter Number.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
                 if (string.IsNullOrWhiteSpace(txtGateway.Text))
                 {
                     MessageBox.Show("Please enter a valid Gateway Number.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
                 if (!dpStartDate.SelectedDate.HasValue || !dpEndDate.SelectedDate.HasValue)
                 {
                     MessageBox.Show("Please select both Start and End Date.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -82,33 +85,43 @@ namespace MeterTacker.CheckoutData
 
                 CommonList.allData.Clear();
                 CommonList.originalData.Clear();
+
                 busyIndicator.IsBusy = true;
+                DataTable dt = null;
+
                 await Task.Run(() =>
                 {
-                    using (DataTable dt = SqlHelper.ExecuteDataTable(connectionString, CommandType.Text, query, parameters))
-                    {
-                        foreach (DataRow row in dt.Rows)
-                        {
-                            var copiedRow = dt.NewRow();
-                            copiedRow.ItemArray = (object[])row.ItemArray.Clone();
-
-                            CommonList.allData.Add(row);
-                            CommonList.originalData.Add(copiedRow);
-                        }
-                    }
+                    dt = SqlHelper.ExecuteDataTable(connectionString, CommandType.Text, query, parameters);
                 });
+
                 busyIndicator.IsBusy = false;
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    MessageBox.Show("No data found for the given criteria.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var copiedRow = dt.NewRow();
+                    copiedRow.ItemArray = (object[])row.ItemArray.Clone();
+                    CommonList.allData.Add(row);
+                    CommonList.originalData.Add(copiedRow);
+                }
 
                 CommonList.oldMeterNumber = meterNumber;
                 CommonList.oldGateway = gateway;
                 CommonList.startDate = startDate;
-                CommonList.endDate = endDate; 
+                CommonList.endDate = endDate;
                 CommonList.selectedTableName = selectedFunctionName;
+
                 this.DialogResult = true;
                 this.Close();
             }
             catch (Exception ex)
             {
+                busyIndicator.IsBusy = false;
                 MessageBox.Show($"Failed to load data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

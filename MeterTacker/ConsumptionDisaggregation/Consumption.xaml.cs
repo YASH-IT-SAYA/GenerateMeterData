@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,9 +11,8 @@ namespace MeterTacker.ConsumptionDisaggregation
 {
     public partial class Consumption : Window
     {
-        private static readonly string developmentEnvironment = "Server=saya-dev2.cq6nozddb1mr.us-west-2.rds.amazonaws.com;Port=5432;Database=sayadev;User Id=SayaDev;Password=duca$$0234;Timeout=1024;Pooling=true;MaxPoolSize=50;CommandTimeout=0";
-        private static readonly string testingEnvironment = "Server=saya-dev2.cq6nozddb1mr.us-west-2.rds.amazonaws.com;Port=5432;Database=sayatesting;User Id=SayaDev;Password=duca$$0234;Timeout=1024;Pooling=true;MaxPoolSize=50;CommandTimeout=0";
-
+        private string developmentEnvironment = ConfigurationManager.ConnectionStrings["developmentEnvironment"].ConnectionString;
+        private string testingEnvironment = ConfigurationManager.ConnectionStrings["testingEnvironment"].ConnectionString;
         public ObservableCollection<FixtureEntry> FixtureEntries { get; set; } = new ObservableCollection<FixtureEntry>();
 
         public Consumption()

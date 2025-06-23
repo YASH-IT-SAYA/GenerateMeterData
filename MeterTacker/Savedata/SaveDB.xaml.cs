@@ -15,8 +15,8 @@ namespace MeterTacker.Savedata
     public partial class SaveDB : Window
     {
 
-        private static readonly string developmentEnvironment = "Server=saya-dev2.cq6nozddb1mr.us-west-2.rds.amazonaws.com;Port=5432;Database=sayadev;User Id=SayaDev;Password=duca$$0234;Timeout=1024;Pooling=true;MaxPoolSize=50;CommandTimeout=0";
-        private static readonly string testingEnvironment = "Server=saya-dev2.cq6nozddb1mr.us-west-2.rds.amazonaws.com;Port=5432;Database=sayatesting;User Id=SayaDev;Password=duca$$0234;Timeout=1024;Pooling=true;MaxPoolSize=50;CommandTimeout=0";
+        private string developmentEnvironment = ConfigurationManager.ConnectionStrings["developmentEnvironment"].ConnectionString;
+        private string testingEnvironment = ConfigurationManager.ConnectionStrings["testingEnvironment"].ConnectionString;
 
         private readonly Dictionary<string, string> tableNameMapping = new Dictionary<string, string>()
         {

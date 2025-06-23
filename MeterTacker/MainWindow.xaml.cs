@@ -10,7 +10,14 @@ namespace MeterTacker
     {
         public MainWindow()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
