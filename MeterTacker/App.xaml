@@ -1,0 +1,18 @@
+﻿<Application x:Class="MeterTacker.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MeterTacker"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type Button}" x:Key="SubPageNameLabel">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Padding" Value="4"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="Width" Value="auto"/>
+                <Setter Property="Background" Value="Green"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
