@@ -2,25 +2,29 @@
 using MeterTacker.CheckoutData;
 using System;
 using MeterTacker.SwitchingWindow;
-
+using log4net;
 
 namespace MeterTacker
 {
     public partial class MainWindow : Window
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public MainWindow()
         {
             try
             {
+                log4net.Config.XmlConfigurator.Configure();
                 InitializeComponent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.Error($"Login Failed message: {ex.Message}");
                 throw;
             }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            log.Info("Login button clicked");
             string username = UsernameTextBox.Text.Trim();
             string password = PasswordBox.Password;
             if (username == "U" && password == "P")
@@ -38,6 +42,7 @@ namespace MeterTacker
             }
             else
             {
+                log.Error("Invalid Password or Username");
                 MessageBox.Show("Invalid Password or Username");
             }
         }
