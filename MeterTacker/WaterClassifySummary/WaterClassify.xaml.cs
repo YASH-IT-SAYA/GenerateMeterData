@@ -33,13 +33,12 @@ namespace MeterTacker.WaterClassifySummary
             YearComboBox.SelectedItem = currentYear;
             MonthComboBox.SelectedItem = DateTime.Now.Month.ToString("D2");
         }
-
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!float.TryParse(hghfrc.Text, out float high) &&
-                !float.TryParse(lfrc.Text, out float low) &&
-                !float.TryParse(mfrc.Text, out float medium) &&
-                !float.TryParse(outliers.Text, out float outlier))
+            if (!decimal.TryParse(hghfrc.Text, out decimal high) &&
+                !decimal.TryParse(lfrc.Text, out decimal low) &&
+                !decimal.TryParse(mfrc.Text, out decimal medium) &&
+                !decimal.TryParse(outliers.Text, out decimal outlier))
             {
                 log.Info("Please enter at least one value among High, Low, Medium, or Outliers.");
                 MessageBox.Show("Please enter at least one value among High, Low, Medium, or Outliers.");
@@ -91,12 +90,11 @@ namespace MeterTacker.WaterClassifySummary
 
             string connectionString = env == "Development Environment" ? developmentEnvironment : testingEnvironment;
 
-            var entries = new List<(string Category, float Value)>();
-            if (float.TryParse(hghfrc.Text, out high)) entries.Add(("High Flow Rate Consumption", high));
-            if (float.TryParse(lfrc.Text, out low)) entries.Add(("Low Flow Rate Consumption", low));
-            if (float.TryParse(mfrc.Text, out medium)) entries.Add(("Medium Flow Rate Consumption", medium));
-            if (float.TryParse(outliers.Text, out outlier)) entries.Add(("Outliers", outlier));
-      
+            var entries = new List<(string Category, decimal Value)>();
+            if (decimal.TryParse(hghfrc.Text, out high)) entries.Add(("High Flow Rate Consumption", high));
+            if (decimal.TryParse(lfrc.Text, out low)) entries.Add(("Low Flow Rate Consumption", low));
+            if (decimal.TryParse(mfrc.Text, out medium)) entries.Add(("Medium Flow Rate Consumption", medium));
+            if (decimal.TryParse(outliers.Text, out outlier)) entries.Add(("Outliers", outlier));
             busyIndicator.IsBusy = true;
 
             try
