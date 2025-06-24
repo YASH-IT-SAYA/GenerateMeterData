@@ -27,7 +27,7 @@ namespace MeterTacker.WaterClassifySummary
                 YearComboBox.Items.Add(year);
             }
             for (int month = 1; month <= 12; month++)
-            {
+            {     
                 MonthComboBox.Items.Add(month.ToString("D2"));
             }
             YearComboBox.SelectedItem = currentYear;
