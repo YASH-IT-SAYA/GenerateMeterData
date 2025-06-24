@@ -4,12 +4,14 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using log4net;
 using Npgsql;
 
 namespace MeterTacker.WaterClassifySummary
 {
     public partial class WaterClassify : Window
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private string developmentEnvironment = ConfigurationManager.ConnectionStrings["developmentEnvironment"].ConnectionString;
         private string testingEnvironment = ConfigurationManager.ConnectionStrings["testingEnvironment"].ConnectionString;
         public WaterClassify()
@@ -17,7 +19,6 @@ namespace MeterTacker.WaterClassifySummary
             InitializeComponent();
             PopulateYearAndMonth();
         }
-  
         private void PopulateYearAndMonth()
         {
             int currentYear = DateTime.Now.Year;
@@ -29,7 +30,6 @@ namespace MeterTacker.WaterClassifySummary
             {
                 MonthComboBox.Items.Add(month.ToString("D2"));
             }
-    
             YearComboBox.SelectedItem = currentYear;
             MonthComboBox.SelectedItem = DateTime.Now.Month.ToString("D2");
         }
@@ -41,6 +41,7 @@ namespace MeterTacker.WaterClassifySummary
                 !float.TryParse(mfrc.Text, out float medium) &&
                 !float.TryParse(outliers.Text, out float outlier))
             {
+                log.Info("Please enter at least one value among High, Low, Medium, or Outliers.");
                 MessageBox.Show("Please enter at least one value among High, Low, Medium, or Outliers.");
                 return;
             }
@@ -48,6 +49,7 @@ namespace MeterTacker.WaterClassifySummary
             string MeterNum = MeterNumber.Text;
             if(string.IsNullOrWhiteSpace(MeterNum))
             {
+                log.Info("Meter Number is required");
                 MessageBox.Show("Meter Number is required");
                 return;
             }
@@ -55,12 +57,14 @@ namespace MeterTacker.WaterClassifySummary
             string gateway = GatewayNumber.Text;
             if (string.IsNullOrWhiteSpace(gateway))
             {
+                log.Info("Gateway number is required");
                 MessageBox.Show("Gateway Number is required.");
                 return;
             }
 
             if (!int.TryParse(CustomerId.Text, out int customerId))
             {
+                log.Info("Invalid Customer ID");
                 MessageBox.Show("Invalid Customer ID");
                 return;
             }
@@ -70,6 +74,7 @@ namespace MeterTacker.WaterClassifySummary
 
             if (string.IsNullOrEmpty(year) || string.IsNullOrEmpty(month))
             {
+                log.Info("Please select both year and month");
                 MessageBox.Show("Please select both year and month.");
                 return;
             }
@@ -79,6 +84,7 @@ namespace MeterTacker.WaterClassifySummary
             string env = (cmbTableName.SelectedItem as ComboBoxItem)?.Content.ToString();
             if (string.IsNullOrWhiteSpace(env) || env == "Select Environment")
             {
+                log.Info("Please select a valid environment.");
                 MessageBox.Show("Please select a valid environment.");
                 return;
             }
@@ -120,12 +126,13 @@ namespace MeterTacker.WaterClassifySummary
                         }
                     }
                 });
-
+                log.Info("Data inserted successfully.");
                 MessageBox.Show("Data inserted successfully.");
                 this.Close();
             }
             catch (Exception ex)
             {
+                log.Error($"Error while data inserting ");
                 MessageBox.Show("Error: " + ex.Message);
             }
             finally

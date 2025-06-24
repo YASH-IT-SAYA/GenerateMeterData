@@ -13,12 +13,10 @@ namespace MeterTacker
         {
             try
             {
-                log4net.Config.XmlConfigurator.Configure();
                 InitializeComponent();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                log.Error($"Login Failed message: {ex.Message}");
                 throw;
             }
         }
@@ -37,6 +35,7 @@ namespace MeterTacker
                 }
                 catch (Exception ex)
                 {
+                    log.Error($"Failed to Login {ex.Message}");
                     MessageBox.Show($"Failed to Login{ex.Message}", "Failed");
                 }
             }
