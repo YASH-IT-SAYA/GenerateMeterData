@@ -80,7 +80,6 @@ namespace MeterTacker.WaterClassifySummary
             }
 
             string formattedMonth = $"['{year}-{month}']";
-
             string env = (cmbTableName.SelectedItem as ComboBoxItem)?.Content.ToString();
             if (string.IsNullOrWhiteSpace(env) || env == "Select Environment")
             {
@@ -90,7 +89,6 @@ namespace MeterTacker.WaterClassifySummary
             }
 
             string connectionString = env == "Development Environment" ? developmentEnvironment : testingEnvironment;
-
             var entries = new List<(string Category, decimal Value)>();
             if (decimal.TryParse(hghfrc.Text, out high)) entries.Add(("High Flow Rate Consumption", high));
             if (decimal.TryParse(lfrc.Text, out low)) entries.Add(("Low Flow Rate Consumption", low));
@@ -107,23 +105,22 @@ namespace MeterTacker.WaterClassifySummary
                         conn.Open();
                         foreach (var (category, value) in entries)
                         {
-                            
                             using (var cmd = new NpgsqlCommand(
                                 @"SELECT public.water_classify_summary_add(
-                                    @p_waterclassify, 
-                                    @p_meternumber, 
-                                    @p_gatewaymac, 
-                                    @p_total_volume, 
-                                    @p_customerid, 
-                                    @p_month,
-                                    @p_date)", conn))
+                                @p_waterclassify, 
+                                @p_meternumber, 
+                                @p_gatewaymac, 
+                                @p_total_volume, 
+                                @p_customerid, 
+                                @p_month,
+                                @p_date)", conn))
                             {
                                 cmd.CommandType = CommandType.Text;
                                 cmd.Parameters.AddWithValue("p_waterclassify", category);
                                 cmd.Parameters.AddWithValue("p_meternumber", MeterNum);
                                 cmd.Parameters.AddWithValue("p_gatewaymac", gateway);
-                                cmd.Parameters.AddWithValue("p_total_volume",(double)value);
-                                cmd.Parameters.AddWithValue("p_customerid",(long)customerId);
+                                cmd.Parameters.AddWithValue("p_total_volume", (double)value);
+                                cmd.Parameters.AddWithValue("p_customerid", (long)customerId);
                                 cmd.Parameters.AddWithValue("p_month", formattedMonth);
                                 cmd.Parameters.AddWithValue("p_date", DateTime.Now);
                                 cmd.ExecuteNonQuery();

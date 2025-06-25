@@ -17,17 +17,14 @@ namespace MeterTacker.ConsumptionDisaggregation
         private string developmentEnvironment = ConfigurationManager.ConnectionStrings["developmentEnvironment"].ConnectionString;
         private string testingEnvironment = ConfigurationManager.ConnectionStrings["testingEnvironment"].ConnectionString;
         public ObservableCollection<FixtureEntry> FixtureEntries { get; set; } = new ObservableCollection<FixtureEntry>();
-
         public Consumption()
         {
             InitializeComponent();
     
             fixtureList.ItemsSource = FixtureEntries;
             unitConsumptionList.ItemsSource = FixtureEntries;
-
             FixtureEntries.Add(new FixtureEntry());
         }
-
         private void AddFixtureRow_Click(object sender, RoutedEventArgs e)
         {
             log.Info("Add Fixture button clicked");
@@ -41,7 +38,6 @@ namespace MeterTacker.ConsumptionDisaggregation
                 FixtureEntries.RemoveAt(FixtureEntries.Count - 1);
             }
         }
-
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
             log.Info("Data Add button clicked");
@@ -77,9 +73,7 @@ namespace MeterTacker.ConsumptionDisaggregation
             string connectionString = env == "Development Environment" ? developmentEnvironment : testingEnvironment;
             DateTime selectedDate = std.SelectedDate.Value;
             bool meterStatus = true;
-
             busyIndicator.IsBusy = true;
-
             try
             {
                 await Task.Run(() =>
@@ -87,11 +81,9 @@ namespace MeterTacker.ConsumptionDisaggregation
                     using (var conn = new NpgsqlConnection(connectionString))
                     {
                         conn.Open();
-
                         foreach (var fixture in FixtureEntries)
                         {
-                            using (var cmd = new NpgsqlCommand(
-                              @"SELECT public.consumption_disaggregation_add(@name, @consumption, @status, @date, @custid)", conn))
+                            using (var cmd = new NpgsqlCommand(@"SELECT public.consumption_disaggregation_add(@name, @consumption, @status, @date, @custid)", conn))
                             {
                                 cmd.CommandType = CommandType.Text;
                                 cmd.Parameters.AddWithValue("name", fixture.FixtureName);
@@ -110,7 +102,6 @@ namespace MeterTacker.ConsumptionDisaggregation
             }
             catch (Exception ex)
             {
-
                 log.Error($"Error inserting Data {ex.Message}");
                 MessageBox.Show("Error inserting data: " + ex.Message);
             }
