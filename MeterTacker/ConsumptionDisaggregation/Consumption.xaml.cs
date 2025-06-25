@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,7 +44,6 @@ namespace MeterTacker.ConsumptionDisaggregation
 
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
-
             log.Info("Data Add button clicked");
             if (!int.TryParse(ci.Text, out int customerId))
             {
@@ -90,11 +90,10 @@ namespace MeterTacker.ConsumptionDisaggregation
 
                         foreach (var fixture in FixtureEntries)
                         {
-                            using (var cmd = new NpgsqlCommand(@"
-                                INSERT INTO public.consumption_disaggregation
-                                (utility_name, utility_consumption, meter_status, today_date, ""customerId"")
-                                VALUES (@name, @consumption, @status, @date, @custid)", conn))
+                            using (var cmd = new NpgsqlCommand(
+                              @"SELECT public.consumption_disaggregation_add(@name, @consumption, @status, @date, @custid)", conn))
                             {
+                                cmd.CommandType = CommandType.Text;
                                 cmd.Parameters.AddWithValue("name", fixture.FixtureName);
                                 cmd.Parameters.AddWithValue("consumption", fixture.UnitConsumption);
                                 cmd.Parameters.AddWithValue("status", meterStatus);

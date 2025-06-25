@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +28,7 @@ namespace MeterTacker.WaterClassifySummary
                 YearComboBox.Items.Add(year);
             }
             for (int month = 1; month <= 12; month++)
-            {     
+            {
                 MonthComboBox.Items.Add(month.ToString("D2"));
             }
             YearComboBox.SelectedItem = currentYear;
@@ -46,7 +47,7 @@ namespace MeterTacker.WaterClassifySummary
             }
 
             string MeterNum = MeterNumber.Text;
-            if(string.IsNullOrWhiteSpace(MeterNum))
+            if (string.IsNullOrWhiteSpace(MeterNum))
             {
                 log.Info("Meter Number is required");
                 MessageBox.Show("Meter Number is required");
@@ -106,19 +107,25 @@ namespace MeterTacker.WaterClassifySummary
                         conn.Open();
                         foreach (var (category, value) in entries)
                         {
-                            using (var cmd = new NpgsqlCommand(@"
-                                INSERT INTO public.""WaterClassifySummary""(
-                                    ""WaterClassify"", ""MeterNumber"", ""Gatewaymac"",
-                                    ""Total_Volume"", ""CustomerId"", ""Month"", ""CreatedDate"")
-                                VALUES (@wc, @mn, @gw, @tv, @cid, @mon, @cdt);", conn))
+                            
+                            using (var cmd = new NpgsqlCommand(
+                                @"SELECT public.water_classify_summary_add(
+                                    @p_waterclassify, 
+                                    @p_meternumber, 
+                                    @p_gatewaymac, 
+                                    @p_total_volume, 
+                                    @p_customerid, 
+                                    @p_month,
+                                    @p_date)", conn))
                             {
-                                cmd.Parameters.AddWithValue("wc", category);
-                                cmd.Parameters.AddWithValue("mn", MeterNum);
-                                cmd.Parameters.AddWithValue("gw", gateway);
-                                cmd.Parameters.AddWithValue("tv", value);
-                                cmd.Parameters.AddWithValue("cid", customerId);
-                                cmd.Parameters.AddWithValue("mon", formattedMonth);
-                                cmd.Parameters.AddWithValue("cdt", DateTime.Now);
+                                cmd.CommandType = CommandType.Text;
+                                cmd.Parameters.AddWithValue("p_waterclassify", category);
+                                cmd.Parameters.AddWithValue("p_meternumber", MeterNum);
+                                cmd.Parameters.AddWithValue("p_gatewaymac", gateway);
+                                cmd.Parameters.AddWithValue("p_total_volume",(double)value);
+                                cmd.Parameters.AddWithValue("p_customerid",(long)customerId);
+                                cmd.Parameters.AddWithValue("p_month", formattedMonth);
+                                cmd.Parameters.AddWithValue("p_date", DateTime.Now);
                                 cmd.ExecuteNonQuery();
                             }
                         }
@@ -127,6 +134,10 @@ namespace MeterTacker.WaterClassifySummary
                 log.Info("Data inserted successfully.");
                 MessageBox.Show("Data inserted successfully.");
                 this.Close();
+            }
+            catch (PostgresException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
             catch (Exception ex)
             {
