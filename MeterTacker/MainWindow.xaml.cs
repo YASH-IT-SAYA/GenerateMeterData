@@ -19,7 +19,7 @@ namespace MeterTacker
             {
                 throw;
             }
-        }   
+        }    
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             log.Info("Login button clicked");
