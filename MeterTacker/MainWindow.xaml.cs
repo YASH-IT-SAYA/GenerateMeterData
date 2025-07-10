@@ -14,18 +14,18 @@ namespace MeterTacker
             try
             {
                 InitializeComponent();
-            }
+            } 
             catch (Exception)
             {
                 throw;
             }
-        }
+        }   
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             log.Info("Login button clicked");
             string username = UsernameTextBox.Text.Trim();
             string password = PasswordBox.Password;
-            if (username == "U" && password == "P")
+            if (username == "Maxlink3120" && password == "MLIS@3120")
             {
                 try
                 {
