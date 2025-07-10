@@ -85,7 +85,7 @@ namespace MeterTacker.ConsumptionDisaggregation
                                 INSERT INTO public.consumption_disaggregation
                                 (utility_name, utility_consumption, meter_status, today_date, ""customerId"")
                                 VALUES (@name, @consumption, @status, @date, @custid)", conn))
-                            {
+                            { 
                                 cmd.Parameters.AddWithValue("name", fixture.FixtureName);
                                 cmd.Parameters.AddWithValue("consumption", fixture.UnitConsumption);
                                 cmd.Parameters.AddWithValue("status", meterStatus);
