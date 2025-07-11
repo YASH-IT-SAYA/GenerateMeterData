@@ -27,7 +27,7 @@ namespace MeterTacker.ConsumptionDisaggregation
         private void AddFixtureRow_Click(object sender, RoutedEventArgs e)
         {
             FixtureEntries.Add(new FixtureEntry());
-        }
+        }   
         private void RemoveFixtureRow_Click(object sender, RoutedEventArgs e)
         {
             if (FixtureEntries.Any())
