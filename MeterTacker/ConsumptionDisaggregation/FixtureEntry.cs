@@ -12,3 +12,4 @@ namespace MeterTacker.ConsumptionDisaggregation
         public int UnitConsumption { get; set; }
     }
 }
+  
