@@ -14,7 +14,7 @@ namespace MeterTacker.ConsumptionDisaggregation
         private string developmentEnvironment = ConfigurationManager.ConnectionStrings["developmentEnvironment"].ConnectionString;
         private string testingEnvironment = ConfigurationManager.ConnectionStrings["testingEnvironment"].ConnectionString;
         public ObservableCollection<FixtureEntry> FixtureEntries { get; set; } = new ObservableCollection<FixtureEntry>();
-
+        //commebnt
         public Consumption()
         {
             InitializeComponent();
