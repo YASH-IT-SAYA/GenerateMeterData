@@ -25,6 +25,9 @@ namespace MeterTacker.ConsumptionDisaggregation
             unitConsumptionList.ItemsSource = FixtureEntries;
             FixtureEntries.Add(new FixtureEntry());
         }
+
+
+
         private void AddFixtureRow_Click(object sender, RoutedEventArgs e)
         {
             log.Info("Add Fixture button clicked");
