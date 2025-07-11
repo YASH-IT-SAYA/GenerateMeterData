@@ -29,7 +29,7 @@ namespace MeterTacker.ConsumptionDisaggregation
         {
             log.Info("Add Fixture button clicked");
             FixtureEntries.Add(new FixtureEntry());
-        }
+        }   
         private void RemoveFixtureRow_Click(object sender, RoutedEventArgs e)
         {
             log.Info("Remove Fixture button clicked");
