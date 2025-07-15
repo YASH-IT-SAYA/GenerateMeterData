@@ -20,9 +20,9 @@ namespace MeterTacker.Helper
         public static List<TableOption> TableOptions { get; } = new List<TableOption>
         {
             new TableOption { DisplayName = "-- Select Table --", ActualName = "" },
-            new TableOption { DisplayName = "WaterMeterStatusReportLatest", ActualName = "get_water_status_filtered" },
-            new TableOption { DisplayName = "DailyMeterViseCons", ActualName = "daily_meter_vise_cons_raw" },
-            new TableOption { DisplayName = "WaterMeterFlowReportLatest", ActualName = "water_meter_flow_report_latest" }
+            new TableOption { DisplayName = "WaterMeterStatusReportLatest(Tempreature,Pressure)", ActualName = "get_water_status_filtered" },
+            new TableOption { DisplayName = "DailyMeterViseCons(Week,Month,Year)", ActualName = "daily_meter_vise_cons_raw" },
+            new TableOption { DisplayName = "WaterMeterFlowReportLatest(WaterConsumptionDayChart)", ActualName = "water_meter_flow_report_latest" }
         };
         public static void Reset()
         {

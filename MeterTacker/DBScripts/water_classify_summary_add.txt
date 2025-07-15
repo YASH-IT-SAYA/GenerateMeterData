@@ -1,0 +1,43 @@
+CREATE OR REPLACE FUNCTION public.water_classify_summary_add(p_waterclassify text, p_meternumber text, p_gatewaymac text, p_total_volume double precision, p_customerid bigint, p_month text, p_date timestamp without time zone)
+ RETURNS integer
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    rows_affected integer;
+    random_mean_duration double precision;
+    random_count int8;
+BEGIN
+
+    random_mean_duration := round((100 + random() * 899)::numeric, 3)::double precision;
+
+    random_count := floor(10 + random() * 90);
+
+    INSERT INTO public."WaterClassifySummary" (
+        "WaterClassify",
+        "MeterNumber",
+        "Gatewaymac",
+        "Total_Volume",
+        "CustomerId",
+        "Month",
+        "CreatedDate",
+        "Mean_Duration",
+        "Count"
+    )
+    VALUES (
+        p_waterclassify,
+        p_meternumber,
+        p_gatewaymac,
+        p_total_volume,
+        p_customerid,
+        p_month,
+        p_date,
+        random_mean_duration,
+        random_count
+    );
+
+    GET DIAGNOSTICS rows_affected = ROW_COUNT;
+
+    RETURN rows_affected;
+END;
+$function$
+;
