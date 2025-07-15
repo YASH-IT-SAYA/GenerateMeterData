@@ -15,11 +15,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MeterTacker.GetDataWUpdate;
+using log4net;
 
 namespace MeterTacker.SwitchingWindow
 {
     public partial class Switching : Window
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public Switching()
         {
             InitializeComponent();
@@ -27,18 +29,20 @@ namespace MeterTacker.SwitchingWindow
 
         private void AddWaterClassiFy_Click(object sender, RoutedEventArgs e)
         {
+            log.Info("WaterClassify Button clciked");
             WaterClassify waterClassify = new WaterClassify();
             waterClassify.ShowDialog();
         }
 
         private void Consumption_Click(object sender, RoutedEventArgs e)
         {
+            log.Info("Consumption Button clciked");
             GetDataWithUpdate getDataWithUpdate = new GetDataWithUpdate();
             getDataWithUpdate.ShowDialog();
         }
-
         private void UsageByFixture_Click(object sender, RoutedEventArgs e)
         {
+            log.Info("UsageByFixture button cliked");
             Consumption consumption = new Consumption();
             consumption.ShowDialog();
         }

@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using log4net;
 using MeterTacker.GetDataWUpdate;
 using MeterTacker.Helper;
 
@@ -10,6 +11,7 @@ namespace MeterTacker.Update
 {
     public partial class UpdateData : Window
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsDataUpdated { get; private set; } = false;
 
         public UpdateData()
@@ -24,7 +26,7 @@ namespace MeterTacker.Update
             {
                 int dayDifference = (CommonList.endDate - CommonList.startDate).Days;
                 DateTime blackoutStart = DateTime.Today.AddDays(-dayDifference);
-                dpStartDate.BlackoutDates.Clear(); 
+                dpStartDate.BlackoutDates.Clear();
                 dpStartDate.BlackoutDates.Add(new CalendarDateRange(blackoutStart, DateTime.MaxValue));
             }
         }
@@ -57,16 +59,19 @@ namespace MeterTacker.Update
             {
                 if (string.IsNullOrWhiteSpace(txtParameterNumber.Text))
                 {
+                    log.Info("Please enter a valid Meter Number.");
                     MessageBox.Show("Please enter a valid Meter Number.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 if (string.IsNullOrWhiteSpace(txtGatewayNumber.Text))
                 {
+                    log.Info("Please enter a valid Gateway Number.");
                     MessageBox.Show("Please enter a valid Gateway Number.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 if (!dpStartDate.SelectedDate.HasValue)
                 {
+                    log.Info("Please select the new date to shift to.");
                     MessageBox.Show("Please select the new date to shift to.");
                     return;
                 }
@@ -75,6 +80,7 @@ namespace MeterTacker.Update
                 {
                     if (!dpBaseDate.SelectedDate.HasValue)
                     {
+                        log.Info("Please select a base date to compare from...");
                         MessageBox.Show("Please select a base date to compare from...");
                         return;
                     }
@@ -86,6 +92,7 @@ namespace MeterTacker.Update
                 var mainWindow = Application.Current.Windows.OfType<MeterTacker.GetDataWUpdate.GetDataWithUpdate>().FirstOrDefault();
                 if (mainWindow == null)
                 {
+                    log.Info("Main window not found.");
                     MessageBox.Show("Main window not found.");
                     return;
                 }
@@ -154,6 +161,7 @@ namespace MeterTacker.Update
                                 break;
 
                             default:
+                                log.Info("Update logic not defined for the selected table.");
                                 MessageBox.Show("Update logic not defined for the selected table.");
                                 break;
                         }
@@ -163,12 +171,14 @@ namespace MeterTacker.Update
                 mainWindow.WaterFlowGrid.ItemsSource = null;
                 mainWindow.WaterFlowGrid.ItemsSource = CommonList.allData.CopyToDataTable().DefaultView;
                 mainWindow.hasUnsavedChanges = true;
+                log.Info("All matching rows updated");
                 MessageBox.Show("All matching rows updated");
                 IsDataUpdated = true;
                 this.Close();
             }
             catch (Exception ex)
             {
+                log.Error($"Erro {ex.Message}");
                 MessageBox.Show($"error {ex}");
             }
             finally

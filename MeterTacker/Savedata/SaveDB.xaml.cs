@@ -9,12 +9,13 @@ using MeterTacker.CheckoutData;
 using MeterTacker.Helper;
 using Npgsql;
 using System.Configuration;
+using log4net;
 
 namespace MeterTacker.Savedata
 {
     public partial class SaveDB : Window
     {
-
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private string developmentEnvironment = ConfigurationManager.ConnectionStrings["developmentEnvironment"].ConnectionString;
         private string testingEnvironment = ConfigurationManager.ConnectionStrings["testingEnvironment"].ConnectionString;
 
@@ -99,8 +100,8 @@ namespace MeterTacker.Savedata
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            log.Info("Savebutton clicked");
             busyIndicator.IsBusy = true;
-
             try
             {
 
@@ -110,6 +111,7 @@ namespace MeterTacker.Savedata
 
                     if (!tableNameMapping.ContainsKey(CommonList.selectedTableName))
                     {
+                        log.Info("selected table does not have a mapped target table.");
                         MessageBox.Show("Selected table does not have a mapped target table.");
                         return;
                     }
@@ -128,6 +130,7 @@ namespace MeterTacker.Savedata
 
                     if (string.IsNullOrEmpty(connStr))
                     {
+                        log.Info("Select the valid environment");
                         MessageBox.Show("Please select a valid environment.");
                         return;
                     }
@@ -137,17 +140,20 @@ namespace MeterTacker.Savedata
                         SaveToDatabase(dataTable, targetTableName, columnMap, connStr);
                     });
                     busyIndicator.IsBusy = false;
+                    log.Info("Data Successfully Saved");
                     MessageBox.Show("Data saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Close();
                 }
                 else
                 {
+                    log.Info("Please select a table in the main window.");
                     MessageBox.Show("Please select a table in the main window.");
                 }
 
             }
             catch (Exception ex)
             {
+                log.Error($"Error while saving data: {ex.Message}");
                 MessageBox.Show($"Error while saving: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -176,7 +182,6 @@ namespace MeterTacker.Savedata
                                     return dt.ToString("yyyy-MM-dd HH:mm:ss");
                                 return val.ToString().Replace(",", " ");
                             });
-
                             writer.WriteLine(string.Join(",", values));
                         }
                     }
@@ -184,6 +189,7 @@ namespace MeterTacker.Savedata
             }
             catch (Exception ex)
             {
+                log.Error($"An error occurred while saving data:\n{ex.Message}");
                 MessageBox.Show($"An error occurred while saving data:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

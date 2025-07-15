@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using log4net;
 using Npgsql;
 
 namespace MeterTacker.WaterClassifySummary
 {
     public partial class WaterClassify : Window
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private string developmentEnvironment = ConfigurationManager.ConnectionStrings["developmentEnvironment"].ConnectionString;
         private string testingEnvironment = ConfigurationManager.ConnectionStrings["testingEnvironment"].ConnectionString;
         public WaterClassify()
@@ -33,11 +36,12 @@ namespace MeterTacker.WaterClassifySummary
         }
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!float.TryParse(hghfrc.Text, out float high) &&
-                !float.TryParse(lfrc.Text, out float low) &&
-                !float.TryParse(mfrc.Text, out float medium) &&
-                !float.TryParse(outliers.Text, out float outlier))
+            if (!decimal.TryParse(hghfrc.Text, out decimal high) &&
+                !decimal.TryParse(lfrc.Text, out decimal low) &&
+                !decimal.TryParse(mfrc.Text, out decimal medium) &&
+                !decimal.TryParse(outliers.Text, out decimal outlier))
             {
+                log.Info("Please enter at least one value among High, Low, Medium, or Outliers.");
                 MessageBox.Show("Please enter at least one value among High, Low, Medium, or Outliers.");
                 return;
             }
@@ -45,6 +49,7 @@ namespace MeterTacker.WaterClassifySummary
             string MeterNum = MeterNumber.Text;
             if (string.IsNullOrWhiteSpace(MeterNum))
             {
+                log.Info("Meter Number is required");
                 MessageBox.Show("Meter Number is required");
                 return;
             }
@@ -52,12 +57,14 @@ namespace MeterTacker.WaterClassifySummary
             string gateway = GatewayNumber.Text;
             if (string.IsNullOrWhiteSpace(gateway))
             {
+                log.Info("Gateway number is required");
                 MessageBox.Show("Gateway Number is required.");
                 return;
             }
 
             if (!int.TryParse(CustomerId.Text, out int customerId))
             {
+                log.Info("Invalid Customer ID");
                 MessageBox.Show("Invalid Customer ID");
                 return;
             }
@@ -67,6 +74,7 @@ namespace MeterTacker.WaterClassifySummary
 
             if (string.IsNullOrEmpty(year) || string.IsNullOrEmpty(month))
             {
+                log.Info("Please select both year and month");
                 MessageBox.Show("Please select both year and month.");
                 return;
             }
@@ -75,17 +83,17 @@ namespace MeterTacker.WaterClassifySummary
             string env = (cmbTableName.SelectedItem as ComboBoxItem)?.Content.ToString();
             if (string.IsNullOrWhiteSpace(env) || env == "Select Environment")
             {
+                log.Info("Please select a valid environment.");
                 MessageBox.Show("Please select a valid environment.");
                 return;
             }
 
             string connectionString = env == "Development Environment" ? developmentEnvironment : testingEnvironment;
-            var entries = new List<(string Category, float Value)>();
-            if (float.TryParse(hghfrc.Text, out high)) entries.Add(("High Flow Rate Consumption", high));
-            if (float.TryParse(lfrc.Text, out low)) entries.Add(("Low Flow Rate Consumption", low));
-            if (float.TryParse(mfrc.Text, out medium)) entries.Add(("Medium Flow Rate Consumption", medium));
-            if (float.TryParse(outliers.Text, out outlier)) entries.Add(("Outliers", outlier));
-
+            var entries = new List<(string Category, decimal Value)>();
+            if (decimal.TryParse(hghfrc.Text, out high)) entries.Add(("High Flow Rate Consumption", high));
+            if (decimal.TryParse(lfrc.Text, out low)) entries.Add(("Low Flow Rate Consumption", low));
+            if (decimal.TryParse(mfrc.Text, out medium)) entries.Add(("Medium Flow Rate Consumption", medium));
+            if (decimal.TryParse(outliers.Text, out outlier)) entries.Add(("Outliers", outlier));
             busyIndicator.IsBusy = true;
 
             try
@@ -97,30 +105,40 @@ namespace MeterTacker.WaterClassifySummary
                         conn.Open();
                         foreach (var (category, value) in entries)
                         {
-                            using (var cmd = new NpgsqlCommand(@"
-                                INSERT INTO public.""WaterClassifySummary""(
-                                    ""WaterClassify"", ""MeterNumber"", ""Gatewaymac"",
-                                    ""Total_Volume"", ""CustomerId"", ""Month"", ""CreatedDate"")
-                                VALUES (@wc, @mn, @gw, @tv, @cid, @mon, @cdt);", conn))
+                            using (var cmd = new NpgsqlCommand(
+                                @"SELECT public.water_classify_summary_add(
+                                @p_waterclassify, 
+                                @p_meternumber, 
+                                @p_gatewaymac, 
+                                @p_total_volume, 
+                                @p_customerid, 
+                                @p_month,
+                                @p_date)", conn))
                             {
-                                cmd.Parameters.AddWithValue("wc", category);
-                                cmd.Parameters.AddWithValue("mn", MeterNum);
-                                cmd.Parameters.AddWithValue("gw", gateway);
-                                cmd.Parameters.AddWithValue("tv", value);
-                                cmd.Parameters.AddWithValue("cid", customerId);
-                                cmd.Parameters.AddWithValue("mon", formattedMonth);
-                                cmd.Parameters.AddWithValue("cdt", DateTime.Now);
+                                cmd.CommandType = CommandType.Text;
+                                cmd.Parameters.AddWithValue("p_waterclassify", category);
+                                cmd.Parameters.AddWithValue("p_meternumber", MeterNum);
+                                cmd.Parameters.AddWithValue("p_gatewaymac", gateway);
+                                cmd.Parameters.AddWithValue("p_total_volume", (double)value);
+                                cmd.Parameters.AddWithValue("p_customerid", (long)customerId);
+                                cmd.Parameters.AddWithValue("p_month", formattedMonth);
+                                cmd.Parameters.AddWithValue("p_date", DateTime.Now);
                                 cmd.ExecuteNonQuery();
                             }
                         }
                     }
                 });
-
+                log.Info("Data inserted successfully.");
                 MessageBox.Show("Data inserted successfully.");
                 this.Close();
             }
+            catch (PostgresException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             catch (Exception ex)
             {
+                log.Error($"Error while data inserting ");
                 MessageBox.Show("Error: " + ex.Message);
             }
             finally

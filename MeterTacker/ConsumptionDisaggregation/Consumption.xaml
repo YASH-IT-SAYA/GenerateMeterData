@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Title="Consumption" Height="650" Width="850">
-    <Window.Background>
+    <Window.Background> 
         <ImageBrush ImageSource="/Images/LoginWindowBackgroundImage1.jpg" Stretch="Fill"/>
     </Window.Background>
     <xctk:BusyIndicator x:Name="busyIndicator" IsBusy="False" BusyContent="Loading...">

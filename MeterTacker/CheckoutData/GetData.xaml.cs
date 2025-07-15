@@ -22,7 +22,6 @@ namespace MeterTacker.CheckoutData
         {
             InitializeComponent();
         }
-
         private async void Search_click(object sender, RoutedEventArgs e)
         {
             try
