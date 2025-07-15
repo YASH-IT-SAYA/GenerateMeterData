@@ -1,0 +1,29 @@
+-- DROP FUNCTION public.consumption_disaggregation_add(varchar, int4, bool, timestamp, int4);
+
+CREATE OR REPLACE FUNCTION public.consumption_disaggregation_add(name character varying, consumption integer, status boolean, date timestamp without time zone, custid integer)
+ RETURNS integer
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    rows_affected integer;
+BEGIN
+INSERT INTO public."consumption_disaggregation"(
+        "utility_name",
+        "utility_consumption",
+        "meter_status",
+        "today_date",
+        "customerId"
+)
+VALUES (
+        name,
+        consumption,
+        status,
+        date,
+        custid
+    );
+    GET DIAGNOSTICS rows_affected = ROW_COUNT;
+
+    RETURN rows_affected;
+	END;
+$function$
+;

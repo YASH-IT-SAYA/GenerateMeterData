@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>241e72.ico</ApplicationIcon>
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <Win32Resource>
@@ -251,6 +251,9 @@
     </EmbeddedResource>
     <None Include="gitignore" />
     <Resource Include="241e72.ico" />
+    <Resource Include="appicon.ico" />
+    <Resource Include="DBScripts\water_classify_summary_add.txt" />
+    <Resource Include="DBScripts\consumption_disaggregation_add.txt" />
     <Content Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
